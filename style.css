@@ -342,7 +342,7 @@ section { position: relative; padding: clamp(72px, 10vw, 128px) 0; }
   box-shadow: 0 0 0 1.5px var(--day-line), 0 40px 80px -40px rgba(60, 30, 40, .45);
 }
 .price-card .l { padding: clamp(28px, 4vw, 48px); background: var(--day-ink); color: var(--cream); position: relative; overflow: hidden; }
-.price-card .l .amount { font: 600 clamp(64px, 9vw, 96px)/1 var(--display); letter-spacing: -.03em; margin-top: 18px; }
+.price-card .l .amount { font: 600 clamp(46px, 6vw, 68px)/1 var(--display); letter-spacing: -.03em; margin-top: 18px; }
 .price-card .l .amount sup { font-size: .42em; vertical-align: .9em; margin-right: 2px; }
 .price-card .l .once { color: var(--mint); font-weight: 800; margin-top: 6px; }
 .price-card .l p.small { color: var(--muted); font-size: 15px; margin-top: 18px; max-width: 28ch; }
