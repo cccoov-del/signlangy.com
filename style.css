@@ -456,8 +456,7 @@ footer .credits a { color: var(--cream); }
 
 @media (max-width: 560px) {
   body { font-size: 16px; }
-  .confetti i:nth-child(1), .confetti i:nth-child(2) { display: none; }
-  .confetti i:nth-child(4) { top: 2% !important; left: 88% !important; }
+  .confetti i:nth-child(1), .confetti i:nth-child(2), .confetti i:nth-child(4) { display: none; }
   .top .wrap { height: 60px; }
   .brand { font-size: 20px; }
   .brand svg { width: 32px; height: 32px; }
