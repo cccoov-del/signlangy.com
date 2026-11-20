@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SignLangy Admin</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0B0B0F; --surface: #17151C; --card: #211D26; --card-2: #2A2531; --outline: #3A3442;
+  --pink: #FF4FA3; --mint: #79E8C0; --lav: #A98BFF; --cream: #FFF4EA; --muted: #B9B2C2; --warm: #FFC96B;
+  --display: "Fredoka", "Nunito", ui-rounded, system-ui, sans-serif;
+  --body: "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--ink); color: var(--cream); font: 400 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+h1, h2 { font-family: var(--display); font-weight: 600; margin: 0; line-height: 1.1; }
+p { margin: 0; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; border-radius: 10px; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+.brand { color: var(--cream); display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 600; font-size: 20px; text-decoration: none; }
+.brand img { width: 36px; height: 36px; border-radius: 10px; }
+.brand small { color: var(--muted); font: 700 12px var(--body); letter-spacing: .08em; text-transform: uppercase; }
+.card { background: var(--card); border: 1px solid var(--outline); border-radius: 22px; padding: 20px; margin-bottom: 16px; }
+.card h2 { font-size: 20px; margin-bottom: 4px; }
+.hint { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+.now { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stat { background: var(--card-2); border-radius: 16px; padding: 14px 16px; }
+.stat b { display: block; font: 600 34px/1.1 var(--display); color: var(--mint); }
+.stat span { color: var(--muted); font-size: 14px; }
+.stat.pink b { color: var(--pink); }
+.tag { white-space: nowrap; display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; background: var(--card-2); color: var(--muted); }
+.tag.warm { background: rgba(255,201,107,.15); color: var(--warm); }
+.tag.mint { background: rgba(121,232,192,.14); color: var(--mint); }
+.tag.err { background: rgba(255,79,163,.14); color: var(--pink); }
+.rows { display: grid; gap: 10px; margin-bottom: 12px; }
+.row { display: grid; grid-template-columns: 28px 1fr 1fr 40px; gap: 8px; align-items: center; }
+.row .n { font: 600 16px var(--display); color: var(--lav); text-align: center; }
+.field { position: relative; }
+.field input { width: 100%; background: var(--surface); border: 1px solid var(--outline); border-radius: 12px; padding: 10px 12px; }
+.field.money input { padding-left: 24px; }
+.field.money::before { content: "$"; position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.field label { display: block; font-size: 12px; color: var(--muted); margin: 0 0 3px 2px; }
+.forever { color: var(--muted); font-size: 14px; padding-left: 4px; }
+.btn { border: 0; border-radius: 999px; padding: 11px 18px; font-weight: 800; cursor: pointer; background: var(--pink); color: #1a0b12; }
+.btn.ghost { background: var(--card-2); color: var(--cream); border: 1px solid var(--outline); }
+.btn.small { padding: 7px 12px; font-size: 14px; }
+.btn:disabled { opacity: .5; cursor: default; }
+.icon { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--outline); background: var(--surface); cursor: pointer; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.inline { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.inline .field { flex: 1 1 160px; }
+ul.list { list-style: none; margin: 0; padding: 0; }
+ul.list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--outline); font-size: 15px; }
+ul.list li:first-child { border-top: 0; }
+ul.list .why { color: var(--muted); font-size: 13px; display: block; }
+.msg { min-height: 22px; font-size: 14px; color: var(--mint); margin-top: 10px; }
+.msg.bad { color: var(--pink); }
+.login { max-width: 440px; margin: 10vh auto 0; }
+.login .field { margin: 14px 0; }
+.empty { color: var(--muted); font-size: 14px; }
+[hidden] { display: none !important; }
+@media (max-width: 480px) {
+  .now { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 22px 1fr 1fr 40px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/"><img src="/img/icon-256.png" alt="" width="36" height="36"><span>SignLangy <small>Admin</small></span></a>
+    <button class="btn ghost small" id="signout" hidden>Sign out</button>
+  </header>
+
+  <section class="card login" id="login" hidden>
+    <h2>Admin sign in</h2>
+    <p class="hint">Paste your admin key. It's in Documents › SignLangy-keys › admin-key.txt. This browser remembers it.</p>
+    <form id="loginForm">
+      <div class="field"><label for="key">Admin key</label><input id="key" type="password" autocomplete="current-password" required></div>
+      <button class="btn" type="submit">Sign in</button>
+      <p class="msg" id="loginMsg"></p>
+    </form>
+  </section>
+
+  <main id="app" hidden>
+    <section class="card">
+      <h2>Right now</h2>
+      <p class="hint" id="nowHint">&nbsp;</p>
+      <div class="now">
+        <div class="stat pink"><b id="nowPrice">–</b><span id="nowLabel">On sale</span></div>
+        <div class="stat"><b id="sold">–</b><span>Buyers so far</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Price ladder</h2>
+      <p class="hint">Each price is sold to a set number of buyers, then the next price starts. The last price is for everyone after.</p>
+      <div class="rows" id="rows"></div>
+      <div class="actions">
+        <button class="btn ghost small" id="addRow" type="button">+ Add a price</button>
+        <button class="btn" id="saveTiers" type="button">Save ladder</button>
+      </div>
+      <p class="msg" id="tiersMsg"></p>
+    </section>
+
+    <section class="card">
+      <h2>Set a price now</h2>
+      <p class="hint">Skips the ladder until you switch it back. Good for a sale.</p>
+      <div class="inline">
+        <div class="field money"><label for="override">Price</label><input id="override" inputmode="decimal" placeholder="4.99"></div>
+        <button class="btn" id="setOverride" type="button">Use this price</button>
+        <button class="btn ghost" id="clearOverride" type="button" hidden>Back to the ladder</button>
+      </div>
+      <p class="msg" id="overrideMsg"></p>
+    </section>
+
+    <section class="card">
+      <h2>Prices in Google Play</h2>
+      <p class="hint">Each price needs its own product in Google Play. The server makes them for you.</p>
+      <ul class="list" id="products"></ul>
+      <div class="actions" style="margin-top:12px"><button class="btn ghost small" id="sync" type="button">Try again</button></div>
+      <p class="msg" id="syncMsg"></p>
+    </section>
+
+    <section class="card">
+      <h2>Latest buyers</h2>
+      <ul class="list" id="recent"></ul>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const API = "https://us-central1-altchatapp.cloudfunctions.net/signlangyAdmin";
+  const STORE = "signlangy-admin-key";
+  const $ = (id) => document.getElementById(id);
+  const money = (n) => "$" + Number(n).toFixed(2);
+  let key = null;
+  try { key = localStorage.getItem(STORE); } catch (_) {}
+
+  async function call(action, extra) {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.assign({ key, action }, extra || {})),
+    });
+    let body = {};
+    try { body = await res.json(); } catch (_) {}
+    if (!res.ok || !body.ok) {
+      const err = new Error(body.message || "Could not reach the server.");
+      err.code = body.error;
+      throw err;
+    }
+    return body;
+  }
+
+  function say(id, text, bad) { const el = $(id); el.textContent = text || ""; el.classList.toggle("bad", !!bad); }
+
+  function showLogin(message) {
+    $("app").hidden = true; $("signout").hidden = true; $("login").hidden = false;
+    say("loginMsg", message || "", !!message);
+  }
+
+  // ---------- ladder rows ----------
+  function rowEl(t, i, count) {
+    const last = i === count - 1;
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      '<span class="n">' + (i + 1) + '</span>' +
+      '<div class="field money"><label>Price</label><input class="price" inputmode="decimal"></div>' +
+      (last ? '<span class="forever">for everyone after</span>'
+            : '<div class="field"><label>Buyers</label><input class="spots" inputmode="numeric"></div>') +
+      '<button class="icon" type="button" aria-label="Remove price ' + (i + 1) + '">✕</button>';
+    row.querySelector(".price").value = t.priceUsd != null ? Number(t.priceUsd).toFixed(2) : "";
+    if (!last) row.querySelector(".spots").value = t.spots != null ? t.spots : "";
+    row.querySelector(".icon").disabled = count === 1;
+    row.querySelector(".icon").addEventListener("click", () => { const ts = readRows(); ts.splice(i, 1); drawRows(ts); });
+    return row;
+  }
+  function readRows() {
+    return [...$("rows").children].map((r) => ({
+      priceUsd: r.querySelector(".price").value.trim(),
+      spots: r.querySelector(".spots") ? r.querySelector(".spots").value.trim() : null,
+    }));
+  }
+  function drawRows(tiers) {
+    const box = $("rows"); box.textContent = "";
+    tiers.forEach((t, i) => box.appendChild(rowEl(t, i, tiers.length)));
+  }
+
+  // ---------- state ----------
+  function draw(s) {
+    $("login").hidden = true; $("app").hidden = false; $("signout").hidden = false;
+    $("nowPrice").textContent = money(s.offer.priceUsd);
+    $("sold").textContent = s.sold;
+    if (s.offer.override) {
+      $("nowLabel").textContent = "Set by you (ladder paused)";
+      $("nowHint").textContent = "You set this price. The ladder is paused.";
+    } else if (s.offer.spotsLeft == null) {
+      $("nowLabel").textContent = "On sale (last price)";
+      $("nowHint").textContent = "This is the last price on the ladder.";
+    } else {
+      $("nowLabel").textContent = s.offer.spotsLeft + (s.offer.spotsLeft === 1 ? " spot left" : " spots left") + " at this price";
+      $("nowHint").textContent = "Price " + (s.offer.tierIndex + 1) + " of " + s.tiers.length + " on the ladder.";
+    }
+    drawRows(s.tiers);
+    $("clearOverride").hidden = !s.override;
+    $("override").value = s.override ? Number(s.override.priceUsd).toFixed(2) : "";
+
+    const ps = $("products"); ps.textContent = "";
+    const known = new Map((s.products || []).map((p) => [p.productId, p]));
+    const wanted = s.tiers.map((t) => t.priceUsd).concat(s.override ? [s.override.priceUsd] : []);
+    const seen = new Set();
+    wanted.forEach((price) => {
+      const id = "signlangy_lifetime_" + Math.round(price * 100);
+      if (seen.has(id)) return; seen.add(id);
+      const p = known.get(id);
+      const li = document.createElement("li");
+      const left = document.createElement("span");
+      left.textContent = money(price);
+      const why = document.createElement("span"); why.className = "why";
+      const tag = document.createElement("span");
+      if (!p) { tag.className = "tag warm"; tag.textContent = "Not made yet"; }
+      else if (p.state === "ACTIVE") { tag.className = "tag mint"; tag.textContent = "Ready"; }
+      else if (p.state === "ERROR") { tag.className = "tag err"; tag.textContent = "Problem"; why.textContent = friendly(p.error); }
+      else { tag.className = "tag warm"; tag.textContent = p.state; }
+      left.appendChild(why);
+      li.append(left, tag); ps.appendChild(li);
+    });
+
+    const rc = $("recent"); rc.textContent = "";
+    if (!s.recent.length) { const li = document.createElement("li"); li.className = "empty"; li.textContent = "No buyers yet."; rc.appendChild(li); }
+    s.recent.forEach((r) => {
+      const li = document.createElement("li");
+      const a = document.createElement("span");
+      a.textContent = (r.test ? "Test purchase" : "Buyer #" + r.number) + " · " + money(r.priceUsd);
+      const b = document.createElement("span"); b.className = r.test ? "tag" : "tag mint";
+      b.textContent = r.at ? new Date(r.at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "";
+      li.append(a, b); rc.appendChild(li);
+    });
+  }
+
+  function friendly(err) {
+    if (!err) return "";
+    if (/403|permission/i.test(err)) return "Google is still switching on access for the server. This can take up to a day. Press Try again later.";
+    if (/billing|no.*bundle|apk/i.test(err)) return "Upload an app build with the purchase screen to Google Play first.";
+    return err;
+  }
+
+  async function load() {
+    try { draw(await call("get")); }
+    catch (e) {
+      if (e.code === "denied") { try { localStorage.removeItem(STORE); } catch (_) {} key = null; showLogin("That key didn't work."); }
+      else showLogin(e.message);
+    }
+  }
+
+  async function busy(btn, msgId, fn) {
+    btn.disabled = true; say(msgId, "Saving…");
+    try { const s = await fn(); draw(s); return s; }
+    catch (e) { say(msgId, e.message, true); }
+    finally { btn.disabled = false; }
+  }
+
+  $("loginForm").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    key = $("key").value.trim();
+    try { localStorage.setItem(STORE, key); } catch (_) {}
+    $("key").value = "";
+    load();
+  });
+  $("signout").addEventListener("click", () => { try { localStorage.removeItem(STORE); } catch (_) {} key = null; showLogin(); });
+  $("addRow").addEventListener("click", () => {
+    const ts = readRows();
+    const last = ts[ts.length - 1] || { priceUsd: "" };
+    if (!last.spots) last.spots = "5";
+    ts.push({ priceUsd: "", spots: null });
+    drawRows(ts);
+    const inputs = $("rows").querySelectorAll(".price"); inputs[inputs.length - 1].focus();
+  });
+  $("saveTiers").addEventListener("click", (ev) => busy(ev.currentTarget, "tiersMsg", async () => {
+    const tiers = readRows().map((t) => ({ priceUsd: t.priceUsd, spots: t.spots == null ? null : Number(t.spots) }));
+    const s = await call("setTiers", { tiers });
+    say("tiersMsg", "Saved. The app shows the new price within a minute.");
+    return s;
+  }));
+  $("setOverride").addEventListener("click", (ev) => busy(ev.currentTarget, "overrideMsg", async () => {
+    const v = $("override").value.trim();
+    if (!v) throw new Error("Type a price first.");
+    const s = await call("setOverride", { priceUsd: v });
+    say("overrideMsg", "Done. Everyone now sees " + money(v) + ".");
+    return s;
+  }));
+  $("clearOverride").addEventListener("click", (ev) => busy(ev.currentTarget, "overrideMsg", async () => {
+    const s = await call("setOverride", { priceUsd: null });
+    say("overrideMsg", "Back to the ladder.");
+    return s;
+  }));
+  $("sync").addEventListener("click", (ev) => busy(ev.currentTarget, "syncMsg", async () => {
+    const s = await call("syncProducts");
+    say("syncMsg", "Checked with Google Play.");
+    return s;
+  }));
+
+  if (key) load(); else showLogin();
+})();
+</script>
+</body>
+</html>
