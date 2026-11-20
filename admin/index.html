@@ -81,12 +81,9 @@ ul.list .why { color: var(--muted); font-size: 13px; display: block; }
 
   <section class="card login" id="login" hidden>
     <h2>Admin sign in</h2>
-    <p class="hint">Paste your admin key. It's in Documents › SignLangy-keys › admin-key.txt. This browser remembers it.</p>
-    <form id="loginForm">
-      <div class="field"><label for="key">Admin key</label><input id="key" type="password" autocomplete="current-password" required></div>
-      <button class="btn" type="submit">Sign in</button>
-      <p class="msg" id="loginMsg"></p>
-    </form>
+    <p class="hint">Only the SignLangy owner's Google account (cccoov@gmail.com) can open this page.</p>
+    <button class="btn" id="google" type="button">Sign in with Google</button>
+    <p class="msg" id="loginMsg"></p>
   </section>
 
   <main id="app" hidden>
@@ -136,20 +133,26 @@ ul.list .why { color: var(--muted); font-size: 13px; display: block; }
   </main>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+// Google sign-in settings come from the price server (kept out of this public repo).
+// Access is checked on the server: only cccoov@gmail.com.
+const API_URL = "https://us-central1-altchatapp.cloudfunctions.net/signlangyAdmin";
+const fb = initializeApp(await (await fetch(API_URL)).json());
+const auth = getAuth(fb);
+
 (() => {
-  const API = "https://us-central1-altchatapp.cloudfunctions.net/signlangyAdmin";
-  const STORE = "signlangy-admin-key";
+  const API = API_URL;
   const $ = (id) => document.getElementById(id);
   const money = (n) => "$" + Number(n).toFixed(2);
-  let key = null;
-  try { key = localStorage.getItem(STORE); } catch (_) {}
 
   async function call(action, extra) {
     const res = await fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(Object.assign({ key, action }, extra || {})),
+      body: JSON.stringify(Object.assign({ idToken: await auth.currentUser.getIdToken(), action }, extra || {})),
     });
     let body = {};
     try { body = await res.json(); } catch (_) {}
@@ -258,7 +261,7 @@ ul.list .why { color: var(--muted); font-size: 13px; display: block; }
   async function load() {
     try { draw(await call("get")); }
     catch (e) {
-      if (e.code === "denied") { try { localStorage.removeItem(STORE); } catch (_) {} key = null; showLogin("That key didn't work."); }
+      if (e.code === "denied") { await signOut(auth); showLogin(e.message); }
       else showLogin(e.message);
     }
   }
@@ -270,14 +273,17 @@ ul.list .why { color: var(--muted); font-size: 13px; display: block; }
     finally { btn.disabled = false; }
   }
 
-  $("loginForm").addEventListener("submit", (ev) => {
-    ev.preventDefault();
-    key = $("key").value.trim();
-    try { localStorage.setItem(STORE, key); } catch (_) {}
-    $("key").value = "";
-    load();
+  $("google").addEventListener("click", async () => {
+    say("loginMsg", "");
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ login_hint: "cccoov@gmail.com", prompt: "select_account" });
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      if (e && e.code !== "auth/popup-closed-by-user") say("loginMsg", "Sign-in didn't finish. Try again.", true);
+    }
   });
-  $("signout").addEventListener("click", () => { try { localStorage.removeItem(STORE); } catch (_) {} key = null; showLogin(); });
+  $("signout").addEventListener("click", () => signOut(auth));
   $("addRow").addEventListener("click", () => {
     const ts = readRows();
     const last = ts[ts.length - 1] || { priceUsd: "" };
@@ -310,7 +316,7 @@ ul.list .why { color: var(--muted); font-size: 13px; display: block; }
     return s;
   }));
 
-  if (key) load(); else showLogin();
+  onAuthStateChanged(auth, (user) => { if (user) load(); else showLogin(); });
 })();
 </script>
 </body>
